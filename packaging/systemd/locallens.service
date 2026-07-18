@@ -1,0 +1,17 @@
+[Unit]
+Description=LocalLens removable media ingestion
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=locallens
+Group=locallens
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/locallens
+ExecStart=/usr/local/bin/locallens /var/lib/locallens/catalog.db status
+
+[Install]
+WantedBy=multi-user.target
