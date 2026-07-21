@@ -1,0 +1,18 @@
+[Unit]
+Description=LocalLens encrypted backup
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=locallens
+Group=locallens
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+ReadWritePaths=/var/lib/locallens /mnt/locallens-backup
+ReadOnlyPaths=/media/locallens-recovery/recovery.key
+ExecStart=/usr/local/bin/locallens /var/lib/locallens/catalog.db backup /var/lib/locallens/store /mnt/locallens-backup /media/locallens-recovery/recovery.key

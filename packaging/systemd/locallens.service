@@ -1,5 +1,5 @@
 [Unit]
-Description=LocalLens removable media ingestion
+Description=LocalLens station health check
 After=local-fs.target
 
 [Service]
@@ -10,8 +10,12 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
 ReadWritePaths=/var/lib/locallens
-ExecStart=/usr/local/bin/locallens /var/lib/locallens/catalog.db status
+ExecStart=/usr/local/bin/locallens /var/lib/locallens/catalog.db health /var/lib/locallens/store
+RemainAfterExit=true
 
 [Install]
 WantedBy=multi-user.target

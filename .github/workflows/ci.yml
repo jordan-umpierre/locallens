@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev libssl-dev
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build --parallel
+      - run: ctest --test-dir build --output-on-failure
+      - run: cpack --config build/CPackConfig.cmake
+      - run: sha256sum locallens-0.2.0-rc1-Linux.tar.gz > locallens-0.2.0-rc1-Linux.tar.gz.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: locallens-linux-candidate
+          path: |
+            locallens-0.2.0-rc1-Linux.tar.gz
+            locallens-0.2.0-rc1-Linux.tar.gz.sha256
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev libssl-dev
+      - run: cmake -S . -B build-sanitize -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+      - run: cmake --build build-sanitize --parallel
+      - run: ctest --test-dir build-sanitize --output-on-failure
