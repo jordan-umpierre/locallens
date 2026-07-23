@@ -6,6 +6,15 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$ROOT/build/test-run"
 export LOCALLENS_TRACE_ID="network-test-29"
 
+dump_failure() {
+  local status="$?"
+  echo "fixture imports failed at line $1" >&2
+  find "$TMP" -maxdepth 1 -type f -name '*.log' -size +0c -print -exec sed -n '1,160p' {} \; >&2
+  exit "$status"
+}
+
+trap 'dump_failure "$LINENO"' ERR
+
 rm -rf "$TMP"
 mkdir -p "$TMP/cards/70mai/DCIM/Movie" "$TMP/cards/tapo/Tapo/Record" "$TMP/cards/reolink/DCIM/RECORD" "$TMP/store"
 
