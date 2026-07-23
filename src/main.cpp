@@ -788,7 +788,7 @@ static void read_range(Db &db, const std::string &token, std::int64_t start, std
     throw std::runtime_error("invalid playback grant");
   }
   fs::path path = text_col(stmt, 0);
-  const auto size = sqlite3_column_int64(stmt, 1);
+  const auto size = static_cast<std::int64_t>(sqlite3_column_int64(stmt, 1));
   sqlite3_finalize(stmt);
   if (start < 0 || length < 1 || start >= size) throw std::runtime_error("invalid range");
   std::ifstream in(path, std::ios::binary);
