@@ -248,6 +248,7 @@ static std::vector<fs::path> scan(const fs::path &root) {
     }
     if (it->is_regular_file() && media_ext(it->path())) out.push_back(it->path());
   }
+  std::sort(out.begin(), out.end());
   return out;
 }
 
